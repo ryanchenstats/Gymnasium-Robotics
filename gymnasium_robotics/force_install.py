@@ -27,6 +27,14 @@ def register_robotics_envs():
             max_episode_steps=50,
         )
 
+
+        register(
+            id=f"FetchDoorOpening{suffix}-v2",
+            entry_point="gymnasium_robotics.envs.fetch.door_opening:MujocoFetchDoorOpening",
+            kwargs=kwargs,
+            max_episode_steps=50,
+        )
+
         register(
             id=f"FetchSlide{suffix}-v1",
             entry_point="gymnasium_robotics.envs.fetch.slide:MujocoPyFetchSlideEnv",
