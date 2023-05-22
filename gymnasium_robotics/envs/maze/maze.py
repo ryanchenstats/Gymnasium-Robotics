@@ -167,6 +167,7 @@ class Maze:
 
         maze = cls(maze_map, maze_size_scaling, maze_height)
         empty_locations = []
+        zidan_scale_factor = 1.7
         for i in range(maze.map_length):
             for j in range(maze.map_width):
                 struct = maze_map[i][j]
@@ -196,6 +197,33 @@ class Maze:
                     maze._combined_locations.append(np.array([x, y]))
                 elif struct == 0:
                     empty_locations.append(np.array([x, y]))
+                elif struct == 2:
+                    ET.SubElement(
+                        worldbody,
+                        "geom",
+                        name=f"block_{i}_{j}",
+                        pos=f"{x} {y-zidan_scale_factor*maze_size_scaling} {maze_height / 2 * maze_size_scaling}",
+                        size=f"{0.5 * maze_size_scaling} {zidan_scale_factor * maze_size_scaling} {maze_height / 2.0 * maze_size_scaling}",
+                        type="box",
+                        material="",
+                        contype="1",
+                        conaffinity="1",
+                        rgba="0.7 0.5 0.3 1.0",
+                    )
+
+                elif struct == 3:
+                    ET.SubElement(
+                        worldbody,
+                        "geom",
+                        name=f"block_{i}_{j}",
+                        pos=f"{x} {y + zidan_scale_factor * maze_size_scaling} {maze_height / 2 * maze_size_scaling}",
+                        size=f"{0.5 * maze_size_scaling} {zidan_scale_factor * maze_size_scaling} {maze_height / 2.0 * maze_size_scaling}",
+                        type="box",
+                        material="",
+                        contype="1",
+                        conaffinity="1",
+                        rgba="0.7 0.5 0.3 1.0",
+                    )
 
         # Add target site for visualization
         ET.SubElement(
