@@ -167,7 +167,7 @@ class Maze:
 
         maze = cls(maze_map, maze_size_scaling, maze_height)
         empty_locations = []
-        zidan_scale_factor = 1.7
+        zidan_scale_factor = 1.45
         for i in range(maze.map_length):
             for j in range(maze.map_width):
                 struct = maze_map[i][j]
