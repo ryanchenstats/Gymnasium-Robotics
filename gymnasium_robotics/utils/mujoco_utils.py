@@ -192,14 +192,14 @@ def get_joint_qpos(model, data, name):
     start_idx = joint_addr
     end_idx = joint_addr + ndim
 
-    return data.qpos[start_idx:end_idx]
+    return data.qpos[start_idx:end_idx].copy()
 
 
 def get_joint_qvel(model, data, name):
     """Return the joints linear and angular velocities (qvel) of the model."""
     joint_id = mujoco.mj_name2id(model, mujoco.mjtObj.mjOBJ_JOINT, name)
     joint_type = model.jnt_type[joint_id]
-    joint_addr = model.jnt_qposadr[joint_id]
+    joint_addr = model.jnt_dofadr[joint_id]
 
     if joint_type == mujoco.mjtJoint.mjJNT_FREE:
         ndim = 6
@@ -212,7 +212,7 @@ def get_joint_qvel(model, data, name):
     start_idx = joint_addr
     end_idx = joint_addr + ndim
 
-    return data.qvel[start_idx:end_idx]
+    return data.qvel[start_idx:end_idx].copy()
 
 
 def get_site_xpos(model, data, name):

@@ -16,22 +16,17 @@
 # sys.path.insert(0, os.path.abspath('.'))
 
 # -- Project information -----------------------------------------------------
-# TODO: change to robotics version
-# from TODO import __version__ as robotics_version
-
 import os
 import sys
-from typing import Any, Dict
 
 import gymnasium_robotics
 
 project = "Gymnasium-Robotics"
-copyright = "2022"
+copyright = "2023 Farama Foundation"
 author = "Farama Foundation"
 
 # The full version, including alpha/beta/rc tags
-# TODO: change to Robotics version
-release = "1.0.0"
+release = gymnasium_robotics.__version__
 
 sys.path.insert(0, os.path.abspath(".."))
 
@@ -45,6 +40,7 @@ extensions = [
     "sphinx.ext.doctest",
     "sphinx.ext.autodoc",
     "sphinx.ext.githubpages",
+    "sphinx.ext.viewcode",
     "myst_parser",
 ]
 
@@ -80,16 +76,18 @@ html_favicon = "_static/img/robotics-favicon.png"
 html_theme_options = {
     "light_logo": "img/robotics.png",
     "dark_logo": "img/robotics-white.png",
-    "gtag": "G-M37ZN7PPMN",
     "image": "img/robotics-github.png",
+    "description": "Gymnasium-Robotics is a collection of robotics simulation environments for Reinforcement Learning",
+    "gtag": "G-M37ZN7PPMN",
+    "versioning": True,
+    "source_repository": "https://github.com/Farama-Foundation/Gymnasium-Robotics/",
+    "source_branch": "master",
+    "source_directory": "docs/",
 }
-html_context: Dict[str, Any] = {}
-html_context["conf_py_path"] = "/docs/"
-html_context["display_github"] = True
-html_context["github_user"] = "Farama-Foundation"
-html_context["github_repo"] = "Gymnasium"
-html_context["github_version"] = "master"
-html_context["slug"] = "gymnasium"
 
 html_static_path = ["_static"]
 html_css_files = []
+
+# -- Generate Changelog -------------------------------------------------
+
+sphinx_github_changelog_token = os.environ.get("SPHINX_GITHUB_CHANGELOG_TOKEN")

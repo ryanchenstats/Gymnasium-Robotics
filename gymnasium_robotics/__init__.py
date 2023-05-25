@@ -20,7 +20,6 @@ def register_robotics_envs():
         }
 
         # Fetch
-
         register(
             id=f"FetchReachObstacle{suffix}-v2",
             entry_point="gymnasium_robotics.envs.fetch.fetch_reach_obstacle:MujocoFetchReachObstacleEnv",
@@ -42,6 +41,12 @@ def register_robotics_envs():
             max_episode_steps=80,
         )
 
+        register(
+            id=f"FetchDoorOpening{suffix}-v2",
+            entry_point="gymnasium_robotics.envs.fetch.door_opening:MujocoFetchDoorOpening",
+            kwargs=kwargs,
+            max_episode_steps=50,
+        )
 
         register(
             id=f"FetchSlide{suffix}-v1",
@@ -1127,7 +1132,7 @@ def register_robotics_envs():
     )
 
 
-__version__ = "1.2.1"
+__version__ = "1.2.2"
 
 
 try:
