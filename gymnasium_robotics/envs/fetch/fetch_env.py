@@ -251,6 +251,10 @@ class MujocoPyFetchEnv(get_base_fetch_env(MujocoPyRobotEnv)):
             else:
                 setattr(self.viewer.cam, key, value)
 
+    def fix_block_reset_position(self, fixed_block_position):
+        self.fixed_block_pos = fixed_block_position
+
+
     def _reset_sim(self):
         self.sim.set_state(self.initial_state)
 
@@ -294,6 +298,7 @@ class MujocoPyFetchEnv(get_base_fetch_env(MujocoPyRobotEnv)):
 class MujocoFetchEnv(get_base_fetch_env(MujocoRobotEnv)):
     def __init__(self, default_camera_config: dict = DEFAULT_CAMERA_CONFIG, **kwargs):
         super().__init__(default_camera_config=default_camera_config, **kwargs)
+        self.fixed_block_pos = None
 
     def _step_callback(self):
         if self.block_gripper:
@@ -372,9 +377,13 @@ class MujocoFetchEnv(get_base_fetch_env(MujocoRobotEnv)):
         site_id = self._mujoco.mj_name2id(
             self.model, self._mujoco.mjtObj.mjOBJ_SITE, "target0"
         )
-        print(self.goal)
+        #print(self.goal)
         self.model.site_pos[site_id] = self.goal - sites_offset[0]
         self._mujoco.mj_forward(self.model, self.data)
+
+
+    def set_fixed_block_pos(self, fixed_pos):
+        self.fixed_block_pos = fixed_pos
 
     def _reset_sim(self, fixed_reset_pos=None):
         self.data.time = self.initial_time
@@ -391,6 +400,8 @@ class MujocoFetchEnv(get_base_fetch_env(MujocoRobotEnv)):
                 object_xpos = self.initial_gripper_xpos[:2] + self.np_random.uniform(
                     -self.obj_range, self.obj_range, size=2
                 )
+            if self.fixed_block_pos is not None:
+                object_xpos = self.initial_gripper_xpos[:2] + self.fixed_block_pos
             object_qpos = self._utils.get_joint_qpos(
                 self.model, self.data, "object0:joint"
             )
