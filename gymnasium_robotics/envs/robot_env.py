@@ -101,6 +101,11 @@ class BaseRobotEnv(GoalEnv):
 
         self.render_mode = render_mode
 
+        self.fixed_goal = None
+
+    def set_fixed_goal(self, fixed_goal):
+        self.fixed_goal = fixed_goal
+
     # Env methods
     # ----------------------------
     def compute_terminated(self, achieved_goal, desired_goal, info):
@@ -178,7 +183,11 @@ class BaseRobotEnv(GoalEnv):
         did_reset_sim = False
         while not did_reset_sim:
             did_reset_sim = self._reset_sim()
-        self.goal = self._sample_goal().copy()
+
+        if self.fixed_goal is not None:
+            self.goal = self.fixed_goal
+        else:
+            self.goal = self._sample_goal().copy()
         obs = self._get_obs()
         if self.render_mode == "human":
             self.render()

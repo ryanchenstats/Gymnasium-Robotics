@@ -28,7 +28,7 @@ class GoalEnv(gym.Env):
 
         In addition, check if the observation space is correct by inspecting the `observation`, `achieved_goal`, and `desired_goal` keys.
         """
-        super().reset(seed=seed)
+        super().reset(seed=seed, options=options)
         # Enforce that each GoalEnv uses a Goal-compatible observation space.
         if not isinstance(self.observation_space, gym.spaces.Dict):
             raise error.Error(
