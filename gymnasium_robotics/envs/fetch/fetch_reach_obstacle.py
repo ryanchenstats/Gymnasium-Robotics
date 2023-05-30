@@ -152,7 +152,7 @@ class MujocoFetchReachObstacleEnv(MujocoFetchEnv, EzPickle):
             goal_feasible = False
             while goal_feasible is False:
                 attempted_goal = self.np_random.uniform(-self.target_range, self.target_range, size=3)
-                print(attempted_goal)
+                #print(attempted_goal)
                 if (0.06 < attempted_goal[1] < 0.13) or (-0.13 < attempted_goal[1] < -0.06):
                     goal_feasible = True
             goal = self.initial_gripper_xpos[:3] + attempted_goal

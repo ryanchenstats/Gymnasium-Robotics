@@ -254,6 +254,9 @@ class MujocoPyFetchEnv(get_base_fetch_env(MujocoPyRobotEnv)):
     def fix_block_reset_position(self, fixed_block_position):
         self.fixed_block_pos = fixed_block_position
 
+    def update_goal(self, updated_goal_position):
+        self.goal = updated_goal_position
+
 
     def _reset_sim(self):
         self.sim.set_state(self.initial_state)
@@ -384,6 +387,9 @@ class MujocoFetchEnv(get_base_fetch_env(MujocoRobotEnv)):
 
     def set_fixed_block_pos(self, fixed_pos):
         self.fixed_block_pos = fixed_pos
+
+    def update_goal(self, updated_goal_position):
+        self.goal = updated_goal_position
 
     def _reset_sim(self, fixed_reset_pos=None):
         self.data.time = self.initial_time
