@@ -35,6 +35,35 @@ class MujocoPyFetchPushEnv(MujocoPyFetchEnv, EzPickle):
         EzPickle.__init__(self, reward_type=reward_type, **kwargs)
 
 
+    def _sample_goal(self):
+        ppp
+        if self.has_object:
+
+            goal_feasible = False
+            while goal_feasible is False:
+                attempted_goal = self.np_random.uniform(-self.target_range, self.target_range, size=3)
+                print(attempted_goal)
+                if (0.06 < attempted_goal[1] < 0.13) or (-0.13 < attempted_goal[1] < -0.06):
+                    goal_feasible = True
+                else:
+                    ffff
+
+            goal = self.initial_gripper_xpos[:3] + attempted_goal
+            goal += self.target_offset
+            goal[2] = self.height_offset
+            if self.target_in_the_air and self.np_random.uniform() < 0.5:
+                goal[2] += self.np_random.uniform(0, 0.45)
+        else:
+            goal_feasible = False
+            while goal_feasible is False:
+                attempted_goal = self.np_random.uniform(-self.target_range, self.target_range, size=3)
+                print(attempted_goal)
+                if (0.06 < attempted_goal[1] < 0.13) or (-0.13 < attempted_goal[1] < -0.06):
+                    goal_feasible = True
+            goal = self.initial_gripper_xpos[:3] + attempted_goal
+        return goal.copy()
+
+
 class MujocoFetchPushEnv(MujocoFetchEnv, EzPickle):
     """
     ## Description
@@ -180,3 +209,32 @@ class MujocoFetchPushEnv(MujocoFetchEnv, EzPickle):
             **kwargs,
         )
         EzPickle.__init__(self, reward_type=reward_type, **kwargs)
+
+
+    def _sample_goal(self):
+        if self.has_object:
+
+            goal_feasible = False
+            while goal_feasible is False:
+                attempted_goal = self.np_random.uniform(-self.target_range, self.target_range, size=3)
+                #print(attempted_goal)
+                if (0.06 < attempted_goal[1] < 9.37) or (-9.37 < attempted_goal[1] < -0.06):
+                #if True:
+                    goal_feasible = True
+                else:
+                    pass
+
+            goal = self.initial_gripper_xpos[:3] + attempted_goal
+            goal += self.target_offset
+            goal[2] = self.height_offset
+            if self.target_in_the_air and self.np_random.uniform() < 0.5:
+                goal[2] += self.np_random.uniform(0, 0.45)
+        else:
+            goal_feasible = False
+            while goal_feasible is False:
+                attempted_goal = self.np_random.uniform(-self.target_range, self.target_range, size=3)
+                #print(attempted_goal)
+                if (0.06 < attempted_goal[1] < 0.13) or (-0.13 < attempted_goal[1] < -0.06):
+                    goal_feasible = True
+            goal = self.initial_gripper_xpos[:3] + attempted_goal
+        return goal.copy()
