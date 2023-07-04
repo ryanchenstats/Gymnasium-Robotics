@@ -377,10 +377,11 @@ class MazeEnv(GoalEnv):
     def compute_reward(
         self, achieved_goal: np.ndarray, desired_goal: np.ndarray, info
     ):
-        if self.reward_type == "dense":
-            return np.exp(-np.linalg.norm(desired_goal - achieved_goal))
-        elif self.reward_type == "sparse":
-            return 1.0 if np.linalg.norm(achieved_goal - desired_goal) <= 0.45 else 0.0
+        d = np.linalg.norm(achieved_goal - desired_goal)
+        if self.reward_type == "sparse":
+            return -(d > 0.45).astype(np.float32)
+        else:
+            return -d
 
     def compute_terminated(
         self, achieved_goal: np.ndarray, desired_goal: np.ndarray, info
