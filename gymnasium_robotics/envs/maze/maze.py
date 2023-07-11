@@ -297,6 +297,12 @@ class MazeEnv(GoalEnv):
             reset_pos = self.maze.unique_reset_locations[reset_index].copy()
 
         return reset_pos
+    
+    def set_fixed_block_pos(self, fixed_pos):
+        self.fixed_block_pos = fixed_pos
+
+    def update_goal(self, updated_goal_position):
+        self.goal = updated_goal_position
 
     def reset(
         self,
@@ -322,7 +328,6 @@ class MazeEnv(GoalEnv):
                 ), f"Goal can't be placed in a wall cell, {options['goal_cell']}"
 
                 goal = self.maze.cell_rowcol_to_xy(options["goal_cell"])
-
             else:
                 goal = self.generate_target_goal()
 

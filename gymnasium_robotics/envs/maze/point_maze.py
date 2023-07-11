@@ -409,3 +409,6 @@ class PointMazeEnv(MazeEnv, EzPickle):
     def close(self):
         super().close()
         self.point_env.close()
+
+    def set_goal(self, goal_pos):
+        self.goal = goal_pos
