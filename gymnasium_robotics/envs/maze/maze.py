@@ -349,8 +349,9 @@ class MazeEnv(GoalEnv):
             else:
                 reset_pos = self.generate_reset_pos()
             
-            if 'fixed_goal' in options and options['fixed_goal'] is not None:
-                self.reset_pos = options['fixed_goal']
+            if 'fixed_goal' and 'init_pos' in options and options['fixed_goal'] is not None and options['init_pos'] is not None:
+                self.reset_pos = options['init_pos']
+                self.set_goal = options['fixed_goal']
                 self.update_target_site_pos()
                 return
 
