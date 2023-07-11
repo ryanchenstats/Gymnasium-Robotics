@@ -346,9 +346,13 @@ class MazeEnv(GoalEnv):
                 ), f"Reset can't be placed in a wall cell, {options['reset_cell']}"
 
                 reset_pos = self.maze.cell_rowcol_to_xy(options["reset_cell"])
-
             else:
                 reset_pos = self.generate_reset_pos()
+            
+            if 'fixed_goal' in options and options['fixed_goal'] is not None:
+                self.reset_pos = options['fixed_goal']
+                self.update_target_site_pos()
+                return
 
         # Update the position of the target site for visualization
         self.update_target_site_pos()
@@ -357,6 +361,7 @@ class MazeEnv(GoalEnv):
 
         # Update the position of the target site for visualization
         self.update_target_site_pos()
+
 
     def add_xy_position_noise(self, xy_pos: np.ndarray) -> np.ndarray:
         """Pass an x,y coordinate and it will return the same coordinate with a noise addition
