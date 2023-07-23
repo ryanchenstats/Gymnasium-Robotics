@@ -290,7 +290,7 @@ class MazeEnv(GoalEnv):
 
         # While reset position is close to goal position
         reset_pos = self.goal.copy()
-        while np.linalg.norm(reset_pos - self.goal) <= 0.5:
+        while np.linalg.norm(reset_pos - self.goal) <= 0.45:
             reset_index = self.np_random.integers(
                 low=0, high=len(self.maze.unique_reset_locations)
             )
@@ -390,7 +390,7 @@ class MazeEnv(GoalEnv):
     ):
         d = np.linalg.norm(achieved_goal - desired_goal, axis=-1)
         if self.reward_type == "sparse":
-            return -(d > 0.5).astype(np.float32)
+            return -(d > 0.45).astype(np.float32)
         else:
             return -d
 
@@ -399,11 +399,11 @@ class MazeEnv(GoalEnv):
     ) -> bool:
         if not self.continuing_task:
             # If task is episodic terminate the episode when the goal is reached
-            return bool(np.linalg.norm(achieved_goal - desired_goal) <= 0.5)
+            return bool(np.linalg.norm(achieved_goal - desired_goal) <= 0.45)
         else:
             # Continuing tasks don't terminate, episode will be truncated when time limit is reached (`max_episode_steps`)
             if (
-                bool(np.linalg.norm(achieved_goal - desired_goal) <= 0.5)
+                bool(np.linalg.norm(achieved_goal - desired_goal) <= 0.45)
                 and len(self.maze.unique_goal_locations) > 1
             ):
                 # Generate another goal
