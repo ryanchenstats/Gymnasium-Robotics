@@ -309,11 +309,17 @@ class PointMazeEnv(MazeEnv, EzPickle):
         render_mode: Optional[str] = None,
         reward_type: str = "sparse",
         continuing_task: bool = True,
+        point_config = None,
         **kwargs,
     ):
-        point_xml_file_path = path.join(
-            path.dirname(path.realpath(__file__)), "../assets/point/point.xml"
-        )
+        if point_config == 'SAM':
+            point_xml_file_path = path.join(
+                path.dirname(path.realpath(__file__)), "../assets/point/point_SAM.xml"
+            )
+        else:
+            point_xml_file_path = point_xml_file_path = path.join(
+                path.dirname(path.realpath(__file__)), "../assets/point/point.xml"
+            )
         super().__init__(
             agent_xml_path=point_xml_file_path,
             maze_map=maze_map,
