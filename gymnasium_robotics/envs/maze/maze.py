@@ -232,7 +232,7 @@ class Maze:
             name="target",
             pos=f"0 0 {maze_height / 2 * maze_size_scaling}",
             size=f"{0.2 * maze_size_scaling}",
-            rgba="1 0 0 0.7",
+            rgba="1 0 0 0",
             type="sphere",
         )
 
