@@ -9,7 +9,7 @@
     <texture type="2d" name="groundplane" builtin="checker" rgb1="0.2 0.3 0.4" rgb2="0.1 0.2 0.3" width="100" height="100"/>
     <texture name="skybox" type="skybox" builtin="gradient" rgb1=".4 .6 .8" rgb2="0 0 0" width="800" height="800" mark="random" markrgb="1 1 1"/>
     <material name="groundplane" texture="groundplane" texrepeat="20 20"/>
-    <material name="target" rgba="0 0 0 0"/>
+    <material name="target" rgba="0.0 0.0 0.0 0"/>
   </asset>
   <visual>
     <headlight ambient=".4 .4 .4" diffuse=".8 .8 .8" specular="0.1 0.1 0.1"/>
