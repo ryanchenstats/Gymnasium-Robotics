@@ -316,7 +316,6 @@ class PointMazeEnv(MazeEnv, EzPickle):
             point_xml_file_path = path.join(
                 path.dirname(path.realpath(__file__)), "../assets/point/point_SAM.xml"
             )
-            print('SAM')
         else:
             point_xml_file_path = point_xml_file_path = path.join(
                 path.dirname(path.realpath(__file__)), "../assets/point/point.xml"
