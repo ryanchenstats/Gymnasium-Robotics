@@ -147,6 +147,7 @@ class Maze:
         maze_map: list,
         maze_size_scaling: float,
         maze_height: float,
+        point_config: str
     ):
         """Class method that returns an instance of Maze with a decoded maze information and the temporal
            path to the new MJCF (xml) file for the MuJoCo simulation.
@@ -226,15 +227,26 @@ class Maze:
                     )
 
         # Add target site for visualization
-        ET.SubElement(
-            worldbody,
-            "site",
-            name="target",
-            pos=f"0 0 {maze_height / 2 * maze_size_scaling}",
-            size=f"{0.2 * maze_size_scaling}",
-            rgba="1 0 0 0",
-            type="sphere",
-        )
+        if point_config == 'SAM':
+            ET.SubElement(
+                worldbody,
+                "site",
+                name="target",
+                pos=f"0 0 {maze_height / 2 * maze_size_scaling}",
+                size=f"{0.2 * maze_size_scaling}",
+                rgba="1 0 0 0", # a = 0.7
+                type="sphere",
+            )
+        else:
+            ET.SubElement(
+                worldbody,
+                "site",
+                name="target",
+                pos=f"0 0 {maze_height / 2 * maze_size_scaling}",
+                size=f"{0.2 * maze_size_scaling}",
+                rgba="1 0 0 0.7",
+                type="sphere",
+            )
 
         # Add the combined cell locations (goal/reset) to goal and reset
         if (
@@ -266,13 +278,14 @@ class MazeEnv(GoalEnv):
         maze_size_scaling: float = 1.0,
         maze_height: float = 0.5,
         position_noise_range: float = 0.25,
+        point_config=None,
         **kwargs,
     ):
 
         self.reward_type = reward_type
         self.continuing_task = continuing_task
         self.maze, self.tmp_xml_file_path = Maze.make_maze(
-            agent_xml_path, maze_map, maze_size_scaling, maze_height
+            agent_xml_path, maze_map, maze_size_scaling, maze_height, point_config=point_config
         )
 
         self.position_noise_range = position_noise_range

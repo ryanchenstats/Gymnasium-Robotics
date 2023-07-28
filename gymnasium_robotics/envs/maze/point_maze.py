@@ -327,6 +327,7 @@ class PointMazeEnv(MazeEnv, EzPickle):
             maze_height=0.4,
             reward_type=reward_type,
             continuing_task=continuing_task,
+            point_config=point_config,
             **kwargs,
         )
 
