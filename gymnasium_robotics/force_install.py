@@ -90,6 +90,12 @@ def register_robotics_envs():
             kwargs=kwargs,
             max_episode_steps=50,
         )
+        register(
+            id=f"FetchRandomObjects{suffix}-v2",
+            entry_point="gymnasium_robotics.envs.fetch.push:MujocoFetchPushEnv",
+            kwargs=kwargs,
+            max_episode_steps=50,
+        )
 
         # Hand
         register(
