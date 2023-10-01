@@ -257,7 +257,6 @@ class MujocoPyFetchEnv(get_base_fetch_env(MujocoPyRobotEnv)):
     def update_goal(self, updated_goal_position):
         self.goal = updated_goal_position
 
-
     def _reset_sim(self):
         self.sim.set_state(self.initial_state)
 
@@ -369,6 +368,8 @@ class MujocoFetchEnv(get_base_fetch_env(MujocoRobotEnv)):
             grip_velp,
             gripper_vel,
         )
+
+
 
     def _get_gripper_xpos(self):
         body_id = self._model_names.body_name2id["robot0:gripper_link"]
@@ -562,9 +563,12 @@ class MujocoFetchRandomEnv(get_base_fetch_env(MujocoRobotEnv)):
             #     object_xpos = self.initial_gripper_xpos[:2] + self.np_random.uniform(
             #         -self.obj_range, self.obj_range, size=2
             #     )
+            
             if self.fixed_block_pos is not None:
+                '''If we fix the block position, set object_xpos to be our fixed position'''
                 object_xpos = self.initial_gripper_xpos[:2] + self.fixed_block_pos
             
+
             for object in OBJECT_NAMES:
                 object_qpos = self._utils.get_joint_qpos(
                     self.model, self.data, f"{object}:joint"
@@ -582,6 +586,14 @@ class MujocoFetchRandomEnv(get_base_fetch_env(MujocoRobotEnv)):
 
         self._mujoco.mj_forward(self.model, self.data)
         return True
+    
+    def render(self):
+        self._render_callback()
+        if self.render_mode == 'human':
+            array = self.mujoco_renderer.render('rgb_array')
+            return self.mujoco_renderer.render(self.render_mode), array
+        else:
+            return self.mujoco_renderer.render(self.render_mode)
 
     def _env_setup(self, initial_qpos):
         for name, value in initial_qpos.items():
