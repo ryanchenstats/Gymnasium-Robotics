@@ -134,6 +134,7 @@ class MujocoFetchPickAndPlaceEnv(MujocoFetchEnv, EzPickle):
             "robot0:slide1": 0.48,
             "robot0:slide2": 0.0,
             "object0:joint": [1.25, 0.53, 0.4, 1.0, 0.0, 0.0, 0.0],
+            "object1:joint": [1.5, 0.25, 0.4, 1.0, 0.0, 0.0, 0.0],
         }
         MujocoFetchEnv.__init__(
             self,
