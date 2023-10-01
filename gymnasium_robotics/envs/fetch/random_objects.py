@@ -2,12 +2,12 @@ import os
 
 from gymnasium.utils.ezpickle import EzPickle
 
-from gymnasium_robotics.envs.fetch import MujocoFetchEnv, MujocoPyFetchEnv
+from gymnasium_robotics.envs.fetch import MujocoFetchEnv, MujocoPyFetchEnv, MujocoFetchRandomEnv
 
 MODEL_XML_PATH = os.path.join("fetch", "random_objects.xml")
 
 
-class MujocoFetchRandomObjectsEnv(MujocoFetchEnv, EzPickle):
+class MujocoFetchRandomObjectsEnv(MujocoFetchRandomEnv, EzPickle):
     """
     ## Description
 
@@ -134,9 +134,10 @@ class MujocoFetchRandomObjectsEnv(MujocoFetchEnv, EzPickle):
             "robot0:slide1": 0.48,
             "robot0:slide2": 0.0,
             "object0:joint": [1.25, 0.53, 0.4, 1.0, 0.0, 0.0, 0.0],
-            "object1:joint": [1.3, 0.5, 0.4, 1.0, 0.0, 0.0, 0.0],
+            "object1:joint": [1.25, 0.7, 0.4, 1.0, 0.0, 0.0, 0.0],
+            "object2:joint": [1.5, 0.5, 0.4, 1.0, 0.0, 0.0, 0.0], #(dim1: (1.2) BOTTOM <-> TOP (1.5), dim2: (0.5) RIGHT<->LEFT (1.0), dim3: height )
         }
-        MujocoFetchEnv.__init__(
+        MujocoFetchRandomEnv.__init__(
             self,
             model_path=MODEL_XML_PATH,
             has_object=True,
