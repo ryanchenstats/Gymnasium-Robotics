@@ -99,7 +99,7 @@ def register_robotics_envs():
 
         register(
             id=f"FetchPush{suffix}-v2",
-            entry_point="gymnasium_robotics.envs.fetch.random_objects:MujocoFetchPickAndPlaceEnv",
+            entry_point="gymnasium_robotics.envs.fetch.push:MujocoFetchPushEnv",
             kwargs=kwargs,
             max_episode_steps=50,
         )
@@ -107,7 +107,7 @@ def register_robotics_envs():
         # Random Objects
         register(
             id=f"FetchRandomObjects{suffix}-v2",
-            entry_point="gymnasium_robotics.envs.fetch.random_objects:MujocoFetchPushEnv",
+            entry_point="gymnasium_robotics.envs.fetch.random_objects:MujocoFetchRandomObjectsEnv",
             kwargs=kwargs,
             max_episode_steps=50,
         )
