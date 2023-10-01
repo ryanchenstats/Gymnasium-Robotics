@@ -3,7 +3,7 @@
 		<geom conaffinity="0" contype="0" pos="0 0 0" rgba="0 0.5 0 0" size="0.005 0.005 0.005" type="box"></geom>
 		<geom conaffinity="0" contype="0" pos="0 0 0" rgba="0 0.5 0 0" size="1 0.005 0.005" type="box"></geom>
 		<geom conaffinity="0" contype="0" pos="0 0 0" rgba="0 0.5 0 0" size="0.005 1 0.001" type="box"></geom>
-		<geom conaffinity="0" contype="0" pos="0 0 0" rgba="0 0.5 00" size="0.005 0.005 1" type="box"></geom>
+		<geom conaffinity="0" contype="0" pos="0 0 0" rgba="0 0.5 0 0" size="0.005 0.005 1" type="box"></geom>
 	</body>
 	<body childclass="robot0:fetch" name="robot0:base_link" pos="0.2869 0.2641 0">
 		<joint armature="0.0001" axis="1 0 0" damping="1e+11" name="robot0:slide0" pos="0 0 0" type="slide"></joint>
