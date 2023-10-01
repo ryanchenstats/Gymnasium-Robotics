@@ -4,7 +4,7 @@ from gymnasium.utils.ezpickle import EzPickle
 
 from gymnasium_robotics.envs.fetch import MujocoFetchEnv, MujocoPyFetchEnv
 
-MODEL_XML_PATH = os.path.join("fetch", "pick_and_place.xml")
+MODEL_XML_PATH = os.path.join("fetch", "random_objects.xml")
 
 
 class MujocoFetchPickAndPlaceEnv(MujocoFetchEnv, EzPickle):
