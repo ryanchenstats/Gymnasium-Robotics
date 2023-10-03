@@ -105,17 +105,20 @@ def get_base_fetch_env(RobotEnvClass: Union[MujocoPyRobotEnv, MujocoRobotEnv]):
             return action
 
         def _get_obs(self):
-            (
-                grip_pos,
-                object_pos,
-                object_rel_pos,
-                gripper_state,
-                object_rot,
-                object_velp,
-                object_velr,
-                grip_velp,
-                gripper_vel,
-            ) = self.generate_mujoco_observations()
+            try:
+                (
+                    grip_pos,
+                    object_pos,
+                    object_rel_pos,
+                    gripper_state,
+                    object_rot,
+                    object_velp,
+                    object_velr,
+                    grip_velp,
+                    gripper_vel,
+                ) = self.generate_mujoco_observations()
+            except ValueError:
+                return self._get_obs_many_object()
 
             full_goal = False
             if not self.has_object:
@@ -144,6 +147,18 @@ def get_base_fetch_env(RobotEnvClass: Union[MujocoPyRobotEnv, MujocoRobotEnv]):
                 "achieved_goal": achieved_goal.copy(),
                 "desired_goal": self.goal.copy(),
             }
+        
+        def _get_obs_many_object(self): 
+            '''
+            Used in the case of many objects on table (the custom environment)
+            Called from MujocoFetchRandomEnv
+            '''
+            object_positions = self.generate_mujoco_observations()
+            desired_goal = self.goal.copy()
+            obs = {'observation': None, 'achieved_goal': None, 'desired_goal': desired_goal}
+            obs['observation'] = np.concatenate([position.ravel() for object, position in object_positions.items()])
+            obs['achieved_goal'] = np.concatenate([position.ravel() for object, position in object_positions.items()])
+            return obs
 
         def generate_mujoco_observations(self):
 
@@ -487,44 +502,46 @@ class MujocoFetchRandomEnv(get_base_fetch_env(MujocoRobotEnv)):
             object_pos = {name: None for name in OBJECT_NAMES}
             for obj in OBJECT_NAMES:
                 object_pos[obj] = self._utils.get_site_xpos(self.model, self.data, obj)
-        
-        if self.has_object:
-            object_pos = self._utils.get_site_xpos(self.model, self.data, "object0")
-            # rotations
-            object_rot = rotations.mat2euler(
-                self._utils.get_site_xmat(self.model, self.data, "object0")
-            )
-            # velocities
-            object_velp = (
-                self._utils.get_site_xvelp(self.model, self.data, "object0") * dt
-            )
-            object_velr = (
-                self._utils.get_site_xvelr(self.model, self.data, "object0") * dt
-            )
-            # gripper state
-            object_rel_pos = object_pos - grip_pos
-            object_velp -= grip_velp
-        else:
-            object_pos = (
-                object_rot
-            ) = object_velp = object_velr = object_rel_pos = np.zeros(0)
-        gripper_state = robot_qpos[-2:]
+        return object_pos
 
-        gripper_vel = (
-            robot_qvel[-2:] * dt
-        )  # change to a scalar if the gripper is made symmetric
+        # # ORIGINAL CODE BELOW 
+        # if self.has_object:
+        #     object_pos = self._utils.get_site_xpos(self.model, self.data, "object0")
+        #     # rotations
+        #     object_rot = rotations.mat2euler(
+        #         self._utils.get_site_xmat(self.model, self.data, "object0")
+        #     )
+        #     # velocities
+        #     object_velp = (
+        #         self._utils.get_site_xvelp(self.model, self.data, "object0") * dt
+        #     )
+        #     object_velr = (
+        #         self._utils.get_site_xvelr(self.model, self.data, "object0") * dt
+        #     )
+        #     # gripper state
+        #     object_rel_pos = object_pos - grip_pos
+        #     object_velp -= grip_velp
+        # else:
+        #     object_pos = (
+        #         object_rot
+        #     ) = object_velp = object_velr = object_rel_pos = np.zeros(0)
+        # gripper_state = robot_qpos[-2:]
 
-        return (
-            grip_pos,
-            object_pos,
-            object_rel_pos,
-            gripper_state,
-            object_rot,
-            object_velp,
-            object_velr,
-            grip_velp,
-            gripper_vel,
-        )
+        # gripper_vel = (
+        #     robot_qvel[-2:] * dt
+        # )  # change to a scalar if the gripper is made symmetric
+
+        # return (
+        #     grip_pos,
+        #     object_pos,
+        #     object_rel_pos,
+        #     gripper_state,
+        #     object_rot,
+        #     object_velp,
+        #     object_velr,
+        #     grip_velp,
+        #     gripper_vel,
+        # )
 
     def _get_gripper_xpos(self):
         body_id = self._model_names.body_name2id["robot0:gripper_link"]
