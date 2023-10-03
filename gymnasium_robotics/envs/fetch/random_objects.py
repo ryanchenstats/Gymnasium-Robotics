@@ -134,8 +134,8 @@ class MujocoFetchRandomObjectsEnv(MujocoFetchRandomEnv, EzPickle):
             "robot0:slide1": 0.48,
             "robot0:slide2": 0.0,
             "object0:joint": [1.25, 0.53, 0.4, 1.0, 0.0, 0.0, 0.0],
-            "object1:joint": [1.25, 0.7, 0.4, 1.0, 0.0, 0.0, 0.0],
-            "object2:joint": [1.5, 0.5, 0.4, 1.0, 0.0, 0.0, 0.0], #(dim1: (1.2) BOTTOM <-> TOP (1.5), dim2: (0.5) RIGHT<->LEFT (1.0), dim3: height )
+            "object1:joint": [1.65, 0.7, 0.4, 1.0, 0.0, 0.0, 0.0],
+            "object2:joint": [1.65, 1.1, 0.4, 1.0, 0.0, 0.0, 0.0], #(dim1: (1.0) BOTTOM <-> TOP (1.65), dim2: (0.4) RIGHT<->LEFT (1.1), dim3: height )
         }
         MujocoFetchRandomEnv.__init__(
             self,
