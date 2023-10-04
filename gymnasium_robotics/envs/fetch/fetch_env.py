@@ -37,6 +37,7 @@ def get_base_fetch_env(RobotEnvClass: Union[MujocoPyRobotEnv, MujocoRobotEnv]):
             target_range,
             distance_threshold,
             reward_type,
+            multiple_obj=False,
             **kwargs
         ):
             """Initializes a new Fetch environment.
@@ -65,6 +66,7 @@ def get_base_fetch_env(RobotEnvClass: Union[MujocoPyRobotEnv, MujocoRobotEnv]):
             self.target_range = target_range
             self.distance_threshold = distance_threshold
             self.reward_type = reward_type
+            self.multiple_obj = multiple_obj
 
             super().__init__(n_actions=4, **kwargs)
 
@@ -368,6 +370,8 @@ class MujocoFetchEnv(get_base_fetch_env(MujocoRobotEnv)):
             ) = object_velp = object_velr = object_rel_pos = np.zeros(0)
         gripper_state = robot_qpos[-2:]
 
+        
+
         gripper_vel = (
             robot_qvel[-2:] * dt
         )  # change to a scalar if the gripper is made symmetric
@@ -414,9 +418,32 @@ class MujocoFetchEnv(get_base_fetch_env(MujocoRobotEnv)):
         if self.model.na != 0:
             self.data.act[:] = None
 
+        '''
+        If there are multiple objects to be added into the env, i.e. FetchPushDistractions
+        Then we add them here. OBJECT NAMES should be the same as the names in the xml file.
+        This is environment specific, and should be a dedicated XML file for each environment to 
+        specify objects. object0 will be reserved from the block that is to be manipulated by arm.
+        '''
+        OBJECT_NAMES = ['object0', 'object1']
+        for object in OBJECT_NAMES[1:]:
+            object_qpos = self._utils.get_joint_qpos(
+                self.model, self.data, f"{object}:joint"
+            )
+            assert object_qpos.shape == (7,)
+            posx = 1.2 + np.random.random() * 0.3
+            posy = 0.5 + np.random.random() * 0.5
+            while not 1.2 < posx < 1.5 or not 0.5 < posy < 1.0:
+                posx = 1.2 + np.random.random() * 0.3
+                posy = 0.5 + np.random.random() * 0.5
+            object_qpos[:2] = [posx, posy]
+            self._utils.set_joint_qpos(
+                self.model, self.data, f"{object}:joint", object_qpos
+            )
+        
+        self._mujoco.mj_forward(self.model, self.data)
+
         # Randomize start position of object.
         if self.has_object:
-
             object_xpos = self.initial_gripper_xpos[:2]
             while np.linalg.norm(object_xpos - self.initial_gripper_xpos[:2]) < 0.1:
                 object_xpos = self.initial_gripper_xpos[:2] + self.np_random.uniform(
@@ -432,8 +459,8 @@ class MujocoFetchEnv(get_base_fetch_env(MujocoRobotEnv)):
             self._utils.set_joint_qpos(
                 self.model, self.data, "object0:joint", object_qpos
             )
+            self._mujoco.mj_forward(self.model, self.data)
 
-        self._mujoco.mj_forward(self.model, self.data)
         return True
 
     def _env_setup(self, initial_qpos):
@@ -462,12 +489,12 @@ class MujocoFetchEnv(get_base_fetch_env(MujocoRobotEnv)):
                 self.model, self.data, "object0"
             )[2]
 
-
 OBJECT_NAMES = ['object0', 'object1', 'object2']
 class MujocoFetchRandomEnv(get_base_fetch_env(MujocoRobotEnv)):
     def __init__(self, default_camera_config: dict = DEFAULT_CAMERA_CONFIG, **kwargs):
         super().__init__(default_camera_config=default_camera_config, **kwargs)
         self.fixed_block_pos = None
+
 
     def _step_callback(self):
         if self.block_gripper:

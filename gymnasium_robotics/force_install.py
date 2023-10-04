@@ -97,6 +97,13 @@ def register_robotics_envs():
             max_episode_steps=50,
         )
 
+        # FetchPush with Distractions
+        register(
+            id=f"FetchPushDistractions{suffix}-v2",
+            entry_point="gymnasium_robotics.envs.fetch.push_distractions:MujocoFetchPushDistractionsEnv",
+            kwargs=kwargs,
+            max_episode_steps=50,
+        )
 
         # Hand
         register(
