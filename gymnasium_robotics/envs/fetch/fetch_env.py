@@ -4,6 +4,7 @@ import numpy as np
 
 from gymnasium_robotics.envs.robot_env import MujocoPyRobotEnv, MujocoRobotEnv
 from gymnasium_robotics.utils import rotations
+from gymnasium.envs.mujoco.mujoco_rendering import MujocoRenderer
 
 DEFAULT_CAMERA_CONFIG = {
     "distance": 2.5,
@@ -191,7 +192,6 @@ def get_base_fetch_env(RobotEnvClass: Union[MujocoPyRobotEnv, MujocoRobotEnv]):
 
     return BaseFetchEnv
 
-
 class MujocoPyFetchEnv(get_base_fetch_env(MujocoPyRobotEnv)):
     def _step_callback(self):
         if self.block_gripper:
@@ -314,10 +314,24 @@ class MujocoPyFetchEnv(get_base_fetch_env(MujocoPyRobotEnv)):
             self.height_offset = self.sim.data.get_site_xpos("object0")[2]
 
 
+'''
+FetchEnv contains all the methods that are used by Fetch. Modifications in this library are as follows:
+1) cam1, cam2 created to provide multiple camera views of the environment
+2) render() added to provide custom rendering functions. Render is defined in BaseFetchEnv but here overrides it
+3) added for-loop in _reset_sim() to allow rendering of new objects provided in assets/*.xml file
+Changes were inspired from making pushdistraction environment.
+'''
+
 class MujocoFetchEnv(get_base_fetch_env(MujocoRobotEnv)):
     def __init__(self, default_camera_config: dict = DEFAULT_CAMERA_CONFIG, **kwargs):
         super().__init__(default_camera_config=default_camera_config, **kwargs)
         self.fixed_block_pos = None
+        self.cam1 = MujocoRenderer(
+            self.model, self.data, DEFAULT_CAMERA_CONFIG
+        )
+        self.cam2 = MujocoRenderer(
+            self.model, self.data, DEFAULT_CAMERA_CONFIG
+        )
 
     def _step_callback(self):
         if self.block_gripper:
@@ -388,7 +402,22 @@ class MujocoFetchEnv(get_base_fetch_env(MujocoRobotEnv)):
             gripper_vel,
         )
 
-
+    def render(self):
+        '''
+        Human render mode still provides output of (None, image, dual vision) (None is a placeholder for the window viewer)
+        Other modes provide output of (render_mode, dual_vision)
+        '''
+        self._render_callback()
+        if self.render_mode == 'human':
+            # cannot call self.[cam_name].render() with multiple render types right after each other.
+            img_array = self.mujoco_renderer.render('rgb_array')
+            array1 = self.cam1.render('rgb_array').copy()
+            array2 = self.cam2.render('rgb_array').copy()
+            return self.mujoco_renderer.render(self.render_mode), img_array, np.concatenate([array1, array2], axis=1)
+        else:
+            array1 = self.cam1.render('rgb_array')
+            array2 = self.cam2.render('rgb_array')
+            return self.mujoco_renderer.render(self.render_mode), np.concatenate([array1, array2], axis=1)
 
     def _get_gripper_xpos(self):
         body_id = self._model_names.body_name2id["robot0:gripper_link"]
@@ -584,7 +613,6 @@ class MujocoFetchRandomEnv(get_base_fetch_env(MujocoRobotEnv)):
         self.model.site_pos[site_id] = self.goal - sites_offset[0]
         self._mujoco.mj_forward(self.model, self.data)
 
-
     def set_fixed_block_pos(self, fixed_pos):
         self.fixed_block_pos = fixed_pos
 
@@ -631,13 +659,20 @@ class MujocoFetchRandomEnv(get_base_fetch_env(MujocoRobotEnv)):
         self._mujoco.mj_forward(self.model, self.data)
         return True
     
+    # def render(self, render_config = {'distance': 2.5, 'azimuth': 180.0, 'elevation': -20.0, 'lookat': np.array([1.3 , 0.75, 0.55])}, 
+    #            image_config1 = {'distance': 2.5, 'azimuth': 160.0, 'elevation': -20.0, 'lookat': np.array([1.3 , 0.75, 0.55])}, 
+    #            image_config2 = {'distance': 2.5, 'azimuth': 200.0, 'elevation': -20.0, 'lookat': np.array([1.3 , 0.75, 0.55])}):
     def render(self):
         self._render_callback()
+        self.mujoco_renderer.default_cam_config = {'distance': 2.5, 'azimuth': 160.0, 'elevation': -20.0, 'lookat': np.array([1.3 , 0.75, 0.55])}
+        array1 = self.mujoco_renderer.render('rgb_array')
+        self.mujoco_renderer.default_cam_config = {'distance': 2.5, 'azimuth': 200.0, 'elevation': -20.0, 'lookat': np.array([1.3 , 0.75, 0.55])}
+        array2 = self.mujoco_renderer.render('rgb_array')
         if self.render_mode == 'human':
-            array = self.mujoco_renderer.render('rgb_array')
-            return self.mujoco_renderer.render(self.render_mode), array
+            self.mujoco_renderer.default_cam_config = {'distance': 2.5, 'azimuth': 180.0, 'elevation': -20.0, 'lookat': np.array([1.3 , 0.75, 0.55])}
+            return self.mujoco_renderer.render(self.render_mode), np.concatenate([array1, array2], axis = 1)
         else:
-            return self.mujoco_renderer.render(self.render_mode)
+            return self.mujoco_renderer.render(self.render_mode), np.concatenate([array1, array2], axis = 1)
 
     def _env_setup(self, initial_qpos):
         for name, value in initial_qpos.items():
