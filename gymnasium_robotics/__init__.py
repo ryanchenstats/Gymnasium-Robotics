@@ -120,6 +120,14 @@ def register_robotics_envs():
             max_episode_steps=50,
         )
 
+        # FetchReach with Distractions
+        register(
+            id=f"FetchReachDistractions{suffix}-v2",
+            entry_point="gymnasium_robotics.envs.fetch.reach_distractions:MujocoFetchReachDistractionsEnv",
+            kwargs=kwargs,
+            max_episode_steps=50,
+        )
+
         # Hand
         register(
             id=f"HandReach{suffix}-v0",
