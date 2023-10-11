@@ -453,7 +453,7 @@ class MujocoFetchEnv(get_base_fetch_env(MujocoRobotEnv)):
         This is environment specific, and should be a dedicated XML file for each environment to 
         specify objects. object0 will be reserved from the block that is to be manipulated by arm.
         '''
-        OBJECT_NAMES = ['object0', 'object1']
+        OBJECT_NAMES = ['object0', 'object1', 'object2']
         for object in OBJECT_NAMES[1:]:
             object_qpos = self._utils.get_joint_qpos(
                 self.model, self.data, f"{object}:joint"

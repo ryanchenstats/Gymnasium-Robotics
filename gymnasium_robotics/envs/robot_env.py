@@ -48,6 +48,7 @@ class BaseRobotEnv(GoalEnv):
         render_mode: Optional[str] = None,
         width: int = DEFAULT_SIZE,
         height: int = DEFAULT_SIZE,
+        obj_float: bool = False
     ):
         """Initialize the hand and fetch robot superclass.
 
@@ -70,6 +71,8 @@ class BaseRobotEnv(GoalEnv):
             raise OSError(f"File {self.fullpath} does not exist")
 
         self.n_substeps = n_substeps
+
+        self.obj_float = obj_float
 
         self.initial_qpos = initial_qpos
 

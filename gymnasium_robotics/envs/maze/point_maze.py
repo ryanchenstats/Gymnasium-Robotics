@@ -410,8 +410,17 @@ class PointMazeEnv(MazeEnv, EzPickle):
             "desired_goal": self.goal.copy(),
         }
 
+    # override rendering
+    # def render(self):
+    #     return self.point_env.render()
+
     def render(self):
-        return self.point_env.render()
+        if self.render_mode == 'human':
+            img_array = self.point_env.mujoco_renderer.render(render_mode ='rgb_array')
+            img_array = self.point_env.mujoco_renderer.render(render_mode ='rgb_array')
+            return self.point_env.render(), img_array
+        else:
+            return None, self.point_env.render()
 
     def close(self):
         super().close()
