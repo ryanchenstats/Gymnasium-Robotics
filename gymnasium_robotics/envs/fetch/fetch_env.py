@@ -401,6 +401,21 @@ class MujocoFetchEnv(get_base_fetch_env(MujocoRobotEnv)):
             grip_velp,
             gripper_vel,
         )
+    
+    def get_objects_xyz(self):      
+        object0_pos = self._utils.get_site_xpos(self.model, self.data, "object0")
+        object1_pos = self._utils.get_site_xpos(self.model, self.data, "object1")
+        object2_pos = self._utils.get_site_xpos(self.model, self.data, "object2")
+        grip_pos = self._utils.get_site_xpos(self.model, self.data, "robot0:grip")
+        return(
+            {
+                'object0': object0_pos,
+                'object1': object1_pos,
+                'object2': object2_pos,
+                'effector': grip_pos
+            }
+        )
+        
 
     def render(self):
         '''
