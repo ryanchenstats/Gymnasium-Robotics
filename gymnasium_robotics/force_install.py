@@ -113,6 +113,14 @@ def register_robotics_envs():
             max_episode_steps=50,
         )
 
+        # FetchPickAndPlace with Distractions
+        register(
+            id=f"FetchPickAndPlaceDistractions{suffix}-v2",
+            entry_point="gymnasium_robotics.envs.fetch.pick_and_place_distractions:MujocoFetchPickAndPlaceDistractionsEnv",
+            kwargs=kwargs,
+            max_episode_steps=50,
+        )
+
         # Hand
         register(
             id=f"HandReach{suffix}-v0",
