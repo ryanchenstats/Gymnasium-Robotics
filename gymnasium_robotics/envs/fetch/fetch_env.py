@@ -472,23 +472,23 @@ class MujocoFetchEnv(get_base_fetch_env(MujocoRobotEnv)):
         This is environment specific, and should be a dedicated XML file for each environment to 
         specify objects. object0 will be reserved from the block that is to be manipulated by arm.
         '''
-        # OBJECT_NAMES = ['object0', 'object1', 'object2']
-        # for object in OBJECT_NAMES[1:]:
-        #     object_qpos = self._utils.get_joint_qpos(
-        #         self.model, self.data, f"{object}:joint"
-        #     )
-        #     assert object_qpos.shape == (7,), f'Expected 7, got {object_qpos.shape}'
-        #     posx = 1.2 + np.random.random() * 0.3
-        #     posy = 0.5 + np.random.random() * 0.5
-        #     while not 1.2 < posx < 1.5 or not 0.5 < posy < 1.0:
-        #         posx = 1.2 + np.random.random() * 0.3
-        #         posy = 0.5 + np.random.random() * 0.5
-        #     object_qpos[:2] = [posx, posy]
-        #     self._utils.set_joint_qpos(
-        #         self.model, self.data, f"{object}:joint", object_qpos
-        #     )
+        OBJECT_NAMES = ['object0', 'object1', 'object2']
+        for object in OBJECT_NAMES[1:]:
+            object_qpos = self._utils.get_joint_qpos(
+                self.model, self.data, f"{object}:joint"
+            )
+            assert object_qpos.shape == (7,), f'Expected 7, got {object_qpos.shape}'
+            posx = 1.2 + np.random.random() * 0.3
+            posy = 0.5 + np.random.random() * 0.5
+            while not 1.2 < posx < 1.5 or not 0.5 < posy < 1.0:
+                posx = 1.2 + np.random.random() * 0.3
+                posy = 0.5 + np.random.random() * 0.5
+            object_qpos[:2] = [posx, posy]
+            self._utils.set_joint_qpos(
+                self.model, self.data, f"{object}:joint", object_qpos
+            )
         
-        # self._mujoco.mj_forward(self.model, self.data)
+        self._mujoco.mj_forward(self.model, self.data)
 
         # Randomize start position of object.
         if self.has_object:
