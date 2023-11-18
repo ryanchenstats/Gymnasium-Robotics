@@ -332,7 +332,7 @@ class AdroitHandRelocateEnv(MujocoEnv, EzPickle, GoalEnv):
         if self.render_mode == "human":
             self.render()
 
-        return obs, reward, False, False, dict(success=goal_achieved)
+        return obs, reward, False, False, dict(is_success=goal_achieved)
 
     def _get_obs(self):
         # qpos for hand
