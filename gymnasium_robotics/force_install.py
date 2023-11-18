@@ -1142,6 +1142,13 @@ def register_robotics_envs():
             kwargs=kwargs,
         )
 
+        register(
+            id=f"AdroitHandRelocateGoal{suffix}-{version}",
+            entry_point="gymnasium_robotics.envs.adroit_hand.adroit_relocate_goal:AdroitHandRelocateEnv",
+            max_episode_steps=200,
+            kwargs=kwargs,
+        )
+
     register(
         id="FrankaKitchen-v1",
         entry_point="gymnasium_robotics.envs.franka_kitchen:KitchenEnv",
