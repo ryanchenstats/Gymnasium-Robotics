@@ -193,13 +193,13 @@ class AdroitHandRelocateEnv(MujocoEnv, EzPickle, GoalEnv):
 
         observation_space = spaces.Dict(
             dict(
-                desired_goal=spaces.Box(
+                observation=spaces.Box(
                     -np.inf, np.inf, shape=(36,), dtype="float64"
                 ),
                 achieved_goal=spaces.Box(
                     -np.inf, np.inf, shape=(3,), dtype="float64"
                 ),
-                observation=spaces.Box(
+                desired_goal=spaces.Box(
                     -np.inf, np.inf, shape=(3,), dtype="float64"
                 ),
             )
@@ -287,6 +287,14 @@ class AdroitHandRelocateEnv(MujocoEnv, EzPickle, GoalEnv):
 
         EzPickle.__init__(self, **kwargs)
 
+    def compute_reward(self, achieved_goal, goal, info):
+            # Compute distance between goal and the achieved goal
+            d = np.linalg.norm(achieved_goal - goal,  axis=-1)
+            if self.sparse_reward:
+                return -(d > 0.1).astype(np.float32)
+            else:
+                return -d
+
     def step(self, a):
         a = np.clip(a, -1.0, 1.0)
         a = self.act_mean + a * self.act_rng  # mean center and scale
@@ -299,7 +307,7 @@ class AdroitHandRelocateEnv(MujocoEnv, EzPickle, GoalEnv):
         # compute the sparse reward variant first
         goal_distance = float(np.linalg.norm(obj_pos - target_pos))
         goal_achieved = True if goal_distance < 0.1 else False
-        reward = 10.0 if goal_achieved else -0.1
+        reward = self.compute_reward(obj_pos, target_pos, None)
 
         # override reward if not sparse reward
         if not self.sparse_reward:
