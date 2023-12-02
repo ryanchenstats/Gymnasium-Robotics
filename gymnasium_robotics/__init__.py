@@ -1169,7 +1169,7 @@ def register_robotics_envs():
         entry_point="gymnasium_robotics.envs.franka_kitchen:KitchenEnv",
         max_episode_steps=280,
     )
-
+    
 
 __version__ = "1.2.2"
 
