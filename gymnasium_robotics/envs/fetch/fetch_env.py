@@ -435,7 +435,7 @@ class MujocoFetchEnv(get_base_fetch_env(MujocoRobotEnv)):
         else:
             array1 = self.cam1.render('rgb_array')
             array2 = self.cam2.render('rgb_array')
-            array3 = self.cam3.render('rgb_array', camera_name='gripper_camera_rgb')
+            array3 = self.cam3.render('rgb_array',)# camera_name='gripper_camera_rgb')
             return self.mujoco_renderer.render(self.render_mode), np.concatenate([array1, array2], axis=1), array3
 
     def _get_gripper_xpos(self):
