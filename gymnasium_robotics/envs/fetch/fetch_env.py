@@ -323,8 +323,10 @@ Changes were inspired from making pushdistraction environment.
 '''
 
 class MujocoFetchEnv(get_base_fetch_env(MujocoRobotEnv)):
-    def __init__(self, default_camera_config: dict = DEFAULT_CAMERA_CONFIG, **kwargs):
+    def __init__(self, default_camera_config: dict = DEFAULT_CAMERA_CONFIG, fixed_x: bool = False, fixed_z : bool = True, **kwargs):
         super().__init__(default_camera_config=default_camera_config, **kwargs)
+        self.fixed_x = fixed_x
+        self.fixed_z = fixed_z
         self.fixed_block_pos = None
         self.cam1 = MujocoRenderer(
             self.model, self.data, DEFAULT_CAMERA_CONFIG
@@ -419,7 +421,34 @@ class MujocoFetchEnv(get_base_fetch_env(MujocoRobotEnv)):
             }
         )
         
-
+    def set_env_state(self, state_dict):
+        qpos = state_dict['qpos']
+        qvel = state_dict['qvel']
+        
+        joint_names = self._model_names.joint_names
+        if self.data.qpos is not None and joint_names:
+            for k, name in enumerate(joint_names):
+                if name != 'object0:joint':
+                    self._utils.set_joint_qpos(self.model, self.data, name, qpos[k])
+                    
+        if self.data.qvel is not None and joint_names:
+            for k, name in enumerate(joint_names):
+                if name != 'object0:joint':
+                    self._utils.set_joint_qvel(self.model, self.data, name, qvel[k])
+                    
+        self._utils.set_joint_qpos(self.model, self.data, name, qpos[-7:])
+        self._utils.set_joint_qvel(self.model, self.data, name, qvel[-6:])
+        self.goal = state_dict['goal']
+        
+        self._utils.reset_mocap2body_xpos(self.model, self.data)
+                
+    def get_env_state(self):
+        joint_names = self._model_names.joint_names
+        state_dict = {'qpos': np.concatenate([self._utils.get_joint_qpos(self.model, self.data, joints) for joints in joint_names]),
+                      'qvel': np.concatenate([self._utils.get_joint_qvel(self.model, self.data, joints) for joints in joint_names])}
+        state_dict['goal'] = self.goal
+        return state_dict
+    
     def render(self):
         '''
         Human render mode still provides output of (None, image, dual vision) (None is a placeholder for the window viewer)
@@ -478,10 +507,10 @@ class MujocoFetchEnv(get_base_fetch_env(MujocoRobotEnv)):
                 self.model, self.data, f"{object}:joint"
             )
             assert object_qpos.shape == (7,), f'Expected 7, got {object_qpos.shape}'
-            posx = 1.2 + np.random.random() * 0.3
+            posx = 1.35 if self.fixed_x else 1.2 + np.random.random() * 0.3
             posy = 0.5 + np.random.random() * 0.5
             while not 1.2 < posx < 1.5 or not 0.5 < posy < 1.0:
-                posx = 1.2 + np.random.random() * 0.3
+                posx = 1.35 if self.fixed_x else 1.2 + np.random.random() * 0.3
                 posy = 0.5 + np.random.random() * 0.5
             object_qpos[:2] = [posx, posy]
             self._utils.set_joint_qpos(
@@ -497,6 +526,8 @@ class MujocoFetchEnv(get_base_fetch_env(MujocoRobotEnv)):
                 object_xpos = self.initial_gripper_xpos[:2] + self.np_random.uniform(
                     -self.obj_range, self.obj_range, size=2
                 )
+                if self.fixed_x:
+                    object_xpos[0] = 1.35
             if self.fixed_block_pos is not None:
                 object_xpos = self.initial_gripper_xpos[:2] + self.fixed_block_pos
             object_qpos = self._utils.get_joint_qpos(

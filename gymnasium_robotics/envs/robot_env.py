@@ -61,6 +61,7 @@ class BaseRobotEnv(GoalEnv):
             width (optional integer): width of each rendered frame. Defaults to DEFAULT_SIZE.
             height (optional integer): height of each rendered frame . Defaults to DEFAULT_SIZE.
         """
+        
         if model_path.startswith("/"):
             self.fullpath = model_path
         else:
@@ -184,14 +185,25 @@ class BaseRobotEnv(GoalEnv):
         """
         super().reset(seed=seed)
         did_reset_sim = False
-        while not did_reset_sim:
-            did_reset_sim = self._reset_sim()
+        
 
         if self.fixed_goal is not None:
             self.goal = self.fixed_goal
         else:
             self.goal = self._sample_goal().copy()
+        
+        # fixed_x and fixed_z default to False
+        # passed through in fetch_env.__init__()
+        if self.fixed_x: # fixed_x will fix goal to middle of table
+            self.goal[0] = 1.35
+        if self.fixed_z: # fixed_z will fix goal to table top
+            self.goal[2] = 0.42    
+        
         obs = self._get_obs()
+
+        while not did_reset_sim:
+            did_reset_sim = self._reset_sim()
+        
         if self.render_mode == "human":
             self.render()
 
