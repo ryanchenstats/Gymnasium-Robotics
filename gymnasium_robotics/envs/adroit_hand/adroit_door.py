@@ -273,7 +273,7 @@ class AdroitHandDoorEnv(MujocoEnv, EzPickle):
 
         EzPickle.__init__(self, **kwargs)
 
-    def step(self, a):
+    def step(self, a):   
         a = np.clip(a, -1.0, 1.0)
         a = self.act_mean + a * self.act_rng  # mean center and scale
 
@@ -385,3 +385,35 @@ class AdroitHandDoorEnv(MujocoEnv, EzPickle):
         qv = state_dict["qvel"]
         self.model.body_pos[self.door_body_id] = state_dict["door_body_pos"]
         self.set_state(qp, qv)
+        
+        obs = self._get_obs()
+        goal_distance = self.data.qpos[self.door_hinge_addrs]
+        goal_achieved = True if goal_distance >= 1.35 else False
+        reward = 10.0 if goal_achieved else -0.1
+
+        # override reward if not sparse reward
+        if not self.sparse_reward:
+            handle_pos = self.data.site_xpos[self.handle_site_id].ravel()
+            palm_pos = self.data.site_xpos[self.grasp_site_id].ravel()
+
+            # get to handle
+            reward = 0.1 * np.linalg.norm(palm_pos - handle_pos)
+            # open door
+            reward += -0.1 * (goal_distance - 1.57) * (goal_distance - 1.57)
+            # velocity cost
+            reward += -1e-5 * np.sum(self.data.qvel**2)
+
+            # Bonus reward
+            if goal_distance > 0.2:
+                reward += 2
+            if goal_distance > 1.0:
+                reward += 8
+
+            # environment completed
+            if goal_distance > 1.35:
+                reward += 10
+
+        if self.render_mode == "human":
+            self.render()
+
+        return obs, reward, dict(success=goal_achieved)
