@@ -431,4 +431,4 @@ class AdroitHandHammerEnv(MujocoEnv, EzPickle):
         if self.render_mode == "human":
             self.render()
 
-        return obs, reward, False, False, dict(success=goal_achieved)
+        return obs, reward, dict(success=goal_achieved)
