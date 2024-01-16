@@ -393,3 +393,42 @@ class AdroitHandHammerEnv(MujocoEnv, EzPickle):
         board_pos = state_dict["board_pos"]
         self.model.body_pos[self.target_body_id] = board_pos
         self.set_state(qp, qv)
+        
+        obs = self._get_obs()
+        
+        hamm_pos = self.data.xpos[self.obj_body_id].ravel()
+        palm_pos = self.data.site_xpos[self.S_grasp_site_id].ravel()
+        head_pos = self.data.site_xpos[self.tool_site_id].ravel()
+        nail_pos = self.data.site_xpos[self.target_obj_site_id].ravel()
+        goal_pos = self.data.site_xpos[self.goal_site_id].ravel()
+
+        # compute the sparse reward variant first
+        goal_distance = np.linalg.norm(nail_pos - goal_pos)
+        goal_achieved = True if goal_distance < 0.01 else False
+        reward = 10.0 if goal_achieved else -0.1
+
+        # override reward if not sparse reward
+        if not self.sparse_reward:
+            # get the palm to the hammer handle
+            reward = 0.1 * np.linalg.norm(palm_pos - hamm_pos)
+            # take hammer head to nail
+            reward -= np.linalg.norm(head_pos - nail_pos)
+            # make nail go inside
+            reward -= 10 * np.linalg.norm(nail_pos - goal_pos)
+            # velocity penalty
+            reward -= 1e-2 * np.linalg.norm(self.data.qvel.ravel())
+
+            # bonus for lifting up the hammer
+            if hamm_pos[2] > 0.04 and head_pos[2] > 0.04:
+                reward += 2
+
+            # bonus for hammering the nail
+            if goal_distance < 0.020:
+                reward += 25
+            if goal_distance < 0.010:
+                reward += 75
+
+        if self.render_mode == "human":
+            self.render()
+
+        return obs, reward, False, False, dict(success=goal_achieved)
