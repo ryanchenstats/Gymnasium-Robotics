@@ -441,12 +441,15 @@ class MujocoFetchEnv(get_base_fetch_env(MujocoRobotEnv)):
         self.goal = state_dict['goal']
         
         self._utils.reset_mocap2body_xpos(self.model, self.data)
+<<<<<<< HEAD
         obs = self._get_obs()
         info = {
             "is_success": self._is_success(obs["achieved_goal"], self.goal),
         }
         reward = self.compute_reward(obs["achieved_goal"], self.goal, info)
         return obs, reward, info
+=======
+>>>>>>> 3738ddf0f9e7c4bf60601f923962a57a4facb75f
                 
     def get_env_state(self):
         joint_names = self._model_names.joint_names
