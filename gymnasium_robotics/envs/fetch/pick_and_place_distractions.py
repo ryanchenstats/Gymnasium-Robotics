@@ -156,7 +156,7 @@ class MujocoFetchPickAndPlaceDistractionsEnv(MujocoFetchEnv, EzPickle):
 
 
 class MujocoPyFetchPickAndPlaceEnv(MujocoPyFetchEnv, EzPickle):
-    def __init__(self, reward_type="sparse", **kwargs):
+    def __init__(self, reward_type="sparse", fixed_x: bool = False, fixed_z: bool = False, **kwargs):
         initial_qpos = {
             "robot0:slide0": 0.405,
             "robot0:slide1": 0.48,
@@ -177,6 +177,8 @@ class MujocoPyFetchPickAndPlaceEnv(MujocoPyFetchEnv, EzPickle):
             distance_threshold=0.05,
             initial_qpos=initial_qpos,
             reward_type=reward_type,
+            fixed_x=fixed_x,
+            fixed_z=fixed_z,
             **kwargs,
         )
         EzPickle.__init__(self, reward_type=reward_type, **kwargs)
