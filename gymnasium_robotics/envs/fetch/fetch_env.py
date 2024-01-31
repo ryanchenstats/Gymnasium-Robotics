@@ -428,12 +428,12 @@ class MujocoFetchEnv(get_base_fetch_env(MujocoRobotEnv)):
         joint_names = self._model_names.joint_names
         if self.data.qpos is not None and joint_names:
             for k, name in enumerate(joint_names):
-                if name != 'object0:joint' or name != 'object1:joint' or name != 'object3:joint':
+                if name != 'object0:joint' and name != 'object1:joint' and name != 'object3:joint':
                     self._utils.set_joint_qpos(self.model, self.data, name, qpos[k])
                     
         if self.data.qvel is not None and joint_names:
             for k, name in enumerate(joint_names):
-                if name != 'object0:joint' or name != 'object1:joint' or name != 'object3:joint':
+                if name != 'object0:joint' and name != 'object1:joint' and name != 'object3:joint':
                     self._utils.set_joint_qvel(self.model, self.data, name, qvel[k])
                     
         self._utils.set_joint_qpos(self.model, self.data, name, qpos[-7:])
