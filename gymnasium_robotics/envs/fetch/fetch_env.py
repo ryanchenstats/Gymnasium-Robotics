@@ -534,9 +534,7 @@ class MujocoFetchEnv(get_base_fetch_env(MujocoRobotEnv)):
             self._utils.set_joint_qpos(
                 self.model, self.data, f"{object}:joint", object_qpos
             )
-            
-        print(self.has_object)
-        
+                    
         self._mujoco.mj_forward(self.model, self.data)
 
         # Randomize start position of object.
