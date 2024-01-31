@@ -513,15 +513,29 @@ class MujocoFetchEnv(get_base_fetch_env(MujocoRobotEnv)):
                 self.model, self.data, f"{object}:joint"
             )
             assert object_qpos.shape == (7,), f'Expected 7, got {object_qpos.shape}'
+            
             posx = 1.35 if self.fixed_x else 1.2 + np.random.random() * 0.3
             posy = 0.5 + np.random.random() * 0.5
             while not 1.2 < posx < 1.5 or not 0.5 < posy < 1.0:
                 posx = 1.35 if self.fixed_x else 1.2 + np.random.random() * 0.3
                 posy = 0.5 + np.random.random() * 0.5
+ 
             object_qpos[:2] = [posx, posy]
+            
+            if object == 'object2':
+                posx = 1.1
+                posy = 0.5 + np.random.random() * 0.5
+                object_qpos[:2] = [posx, posy]
+                self._utils.set_joint_qpos(
+                    self.model, self.data, f"{object}:joint", object_qpos
+                )
+                continue
+            
             self._utils.set_joint_qpos(
                 self.model, self.data, f"{object}:joint", object_qpos
             )
+            
+        print(self.has_object)
         
         self._mujoco.mj_forward(self.model, self.data)
 
@@ -541,6 +555,7 @@ class MujocoFetchEnv(get_base_fetch_env(MujocoRobotEnv)):
             )
             assert object_qpos.shape == (7,)
             object_qpos[:2] = object_xpos
+                
             self._utils.set_joint_qpos(
                 self.model, self.data, "object0:joint", object_qpos
             )
