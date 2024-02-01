@@ -450,7 +450,7 @@ class MujocoFetchEnv(get_base_fetch_env(MujocoRobotEnv)):
                 
     def get_env_state(self):
         joint_names = self._model_names.joint_names
-        joint_names = tuple([joint for joint in joint_names if joint not in ['object1:joint', 'object2:joint']])
+        # joint_names = tuple([joint for joint in joint_names if joint not in ['object1:joint', 'object2:joint']])
         state_dict = {'qpos': np.concatenate([self._utils.get_joint_qpos(self.model, self.data, joints) for joints in joint_names]),
                       'qvel': np.concatenate([self._utils.get_joint_qvel(self.model, self.data, joints) for joints in joint_names])}
         state_dict['goal'] = self.goal
